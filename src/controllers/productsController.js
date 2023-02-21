@@ -9,8 +9,6 @@ const toThousand = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 const controller = {
 	// Root - Show all products
 	index: (req, res) => {
-		
-		const productsFilePath = path.join(__dirname, '../data/productsDataBase.json');
 		const products = JSON.parse(fs.readFileSync(productsFilePath, 'utf-8'));
 
 		const priceFinal = products.map(product => product.price - (product.price * (product.discount/100)) );
@@ -26,8 +24,6 @@ const controller = {
 
 	// Detail - Detail from one product
 	detail: (req, res) => {
-
-		const productsFilePath = path.join(__dirname, '../data/productsDataBase.json');
 		const products = JSON.parse(fs.readFileSync(productsFilePath, 'utf-8'));
 
 		const {id}= req.params
@@ -50,18 +46,18 @@ const controller = {
 	
 	// Create -  Method to store
 	store: (req, res) => {
-		const {name,price,discount,category,description} = req.body
+		const {name,price,discount,category,description,image} = req.body
 
 		// return res.send(req.body)
 
 		const newProduct = {
 			id : products[products.length - 1].id + 1,
-			name : name.trim(),
+			name : name,
 			price: +price,
 			discount : +discount,
 			category : category,
-			description : description.trim(),
-			image: null
+			description : description,
+			image: req.file ? req.file.filename : null
 		}
 
 		products.push(newProduct)
@@ -87,12 +83,12 @@ const controller = {
 
 		const productModified = {
 			id : +id,
-			name: name.trim(),
+			name: name,
 			price: +price,
 			discount: +discount,
 			category: category,
-			description: description.trim(),
-			image: product.image,
+			description: description,
+			image: req.file ? req.file.filename : product.image
 		}
 
 		const productosActualizados = products.map(product =>{
